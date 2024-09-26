@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->middleware('courier.custom')->group(function () {
+    Route::resources([
+        'blogs' => BlogController::class,
+    ]);
+
     Route::get('/test', function () {
         return "Hello world";
     });
