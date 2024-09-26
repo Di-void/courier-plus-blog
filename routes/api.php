@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware('courier.custom')->group(function () {
     Route::get('/test', function () {
         return "Hello world";
     });
