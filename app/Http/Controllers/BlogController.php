@@ -18,7 +18,7 @@ class BlogController extends Controller
     {
         $blogs = Blog::all();
 
-        return response()->json(['blogs' => $blogs], Response::HTTP_OK);
+        return response()->json(['message' => 'success', 'data' => ['blogs' => $blogs]], Response::HTTP_OK);
     }
 
     /**
@@ -50,7 +50,7 @@ class BlogController extends Controller
             $blog = Blog::with('posts')->where('id', $id)->firstOrFail();
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Resource not found'], RESPONSE::HTTP_NOT_FOUND);
+            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'blog']], RESPONSE::HTTP_NOT_FOUND);
         }
     }
 
@@ -65,14 +65,14 @@ class BlogController extends Controller
         ]);
 
         try {
-            // Log blog creation details
+            // Log blog update details
             Blog::where('id', $id)->firstOrFail()->update($validated);
 
             $blog = Blog::find($id);
 
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Resource not found'], RESPONSE::HTTP_NOT_FOUND);
+            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'blogs']], RESPONSE::HTTP_BAD_REQUEST);
         }
     }
 
@@ -82,12 +82,12 @@ class BlogController extends Controller
     public function destroy(string $id)
     {
         try {
-            // Log blog creation details
+            // Log blog deletion
             Blog::where('id', $id)->firstOrFail()->delete();
 
             return response()->json(['message' => 'success', 'data' => null], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Resource not found'], RESPONSE::HTTP_NOT_FOUND);
+            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'blogs']], RESPONSE::HTTP_BAD_REQUEST);
         }
     }
 }

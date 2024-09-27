@@ -11,7 +11,7 @@ class Blog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description'];
+    protected $fillable = ['title', 'description', 'user_id'];
 
     protected $hidden = ['created_at', 'updated_at', 'user_id'];
 
