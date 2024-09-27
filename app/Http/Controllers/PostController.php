@@ -36,10 +36,11 @@ class PostController extends Controller
         ]);
 
         // check if blog exists
-        $blog = Blog::find($validated['blog_id']);
+        $blog_id = $validated['blog_id'];
+        $blog = Blog::find($blog_id);
 
         if (!$blog) {
-            return response()->json(['error' => 'Resource not found', 'resource' => 'blogs'], RESPONSE::HTTP_BAD_REQUEST);
+            return response()->json(['error' => "Resource with id '{$blog_id}' not found", 'resource' => 'blogs'], RESPONSE::HTTP_BAD_REQUEST);
         }
 
         $user_id = Auth::id();
@@ -59,7 +60,7 @@ class PostController extends Controller
             $blog = Post::withCount('likes')->with('comments')->where('id', $id)->firstOrFail();
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'posts']], RESPONSE::HTTP_NOT_FOUND);
+            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_NOT_FOUND);
         }
     }
 
@@ -95,7 +96,7 @@ class PostController extends Controller
             // Log post update details
             return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
+            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
         }
     }
 
@@ -111,7 +112,7 @@ class PostController extends Controller
             return response()->json(['message' => 'success', 'data' => null], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
             // Log unknown resource details
-            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
+            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
         }
     }
 }

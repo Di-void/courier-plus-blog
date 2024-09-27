@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostLikeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,13 +20,12 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     // Protected Routes
     Route::middleware(['auth:sanctum', 'courier.custom'])->group(function () {
+        Route::post('/posts/{id}/like', [PostLikeController::class, 'store']);
+        Route::post('/posts/{id}/comment', [CommentController::class, 'store']);
+
         Route::apiResources([
             'blogs' => BlogController::class,
             'posts' => PostController::class,
         ]);
-
-        Route::get('/test', function () {
-            return "Hello world";
-        });
     });
 });

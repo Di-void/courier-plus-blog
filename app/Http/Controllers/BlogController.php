@@ -50,7 +50,7 @@ class BlogController extends Controller
             $blog = Blog::with('posts')->where('id', $id)->firstOrFail();
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'blog']], RESPONSE::HTTP_NOT_FOUND);
+            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'blog']], RESPONSE::HTTP_BAD_REQUEST);
         }
     }
 
@@ -72,7 +72,7 @@ class BlogController extends Controller
 
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'blogs']], RESPONSE::HTTP_BAD_REQUEST);
+            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'blog']], RESPONSE::HTTP_BAD_REQUEST);
         }
     }
 
@@ -87,7 +87,7 @@ class BlogController extends Controller
 
             return response()->json(['message' => 'success', 'data' => null], Response::HTTP_OK);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => ['message' => 'Resource not found', 'resource' => 'blogs']], RESPONSE::HTTP_BAD_REQUEST);
+            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'blog']], RESPONSE::HTTP_BAD_REQUEST);
         }
     }
 }
