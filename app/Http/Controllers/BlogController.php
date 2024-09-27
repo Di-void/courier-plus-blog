@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
 
 class BlogController extends Controller
 {
@@ -15,7 +16,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blogs = DB::table('blogs')->get();
+        $blogs = Blog::all();
 
         return response()->json(['blogs' => $blogs], Response::HTTP_OK);
     }
@@ -26,21 +27,17 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         // Log::channel('stderr')->info('Request input', ['input' => $input]);
-
-        // retrieve authenticated user id
-        // $user_id = Auth::id();
-
-        // validate body
-        $validated_input = $request->validate([
+        $validated = $request->validate([
             'title' => ['required', 'string'],
             'description' => ['string', 'nullable'],
         ]);
 
-        // create new record in the db
-        $record = DB::table('blogs');
+        $user_id = Auth::id();
+        $validated['user_id'] = $user_id;
+        $blog = Blog::create($validated);
+        // Log blog creation details
 
-        // return successful response
-        return response()->json(['success' => 'nope'], Response::HTTP_OK);
+        return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
     }
 
     /**
@@ -48,7 +45,13 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // retrieve record
+        try {
+            $blog = Blog::with('posts')->where('id', $id)->firstOrFail();
+            return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Resource not found'], RESPONSE::HTTP_NOT_FOUND);
+        }
     }
 
     /**
@@ -56,7 +59,21 @@ class BlogController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'title' => ['string'],
+            'description' => ['string', 'nullable'],
+        ]);
+
+        try {
+            // Log blog creation details
+            Blog::where('id', $id)->firstOrFail()->update($validated);
+
+            $blog = Blog::find($id);
+
+            return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Resource not found'], RESPONSE::HTTP_NOT_FOUND);
+        }
     }
 
     /**
@@ -64,6 +81,13 @@ class BlogController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            // Log blog creation details
+            Blog::where('id', $id)->firstOrFail()->delete();
+
+            return response()->json(['message' => 'success', 'data' => null], Response::HTTP_OK);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Resource not found'], RESPONSE::HTTP_NOT_FOUND);
+        }
     }
 }

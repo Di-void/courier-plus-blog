@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth:sanctum', 'courier.custom'])->group(function () {
         Route::apiResources([
             'blogs' => BlogController::class,
+            'posts' => PostController::class,
         ]);
 
         Route::get('/test', function () {
