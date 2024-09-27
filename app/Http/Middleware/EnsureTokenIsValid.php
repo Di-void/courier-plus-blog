@@ -18,7 +18,7 @@ class EnsureTokenIsValid
         // !no default
         $secret = env('AUTH_TOKEN');
 
-        $token = $request->header('X-Courier-Token');
+        $token = $request->bearerToken();
 
         if (!$token || $token !== $secret) {
             return response()->json(['error' => 'Unauthorized'], Response::HTTP_FORBIDDEN);

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BlogController extends Controller
 {
@@ -11,15 +15,9 @@ class BlogController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $blogs = DB::table('blogs')->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json(['blogs' => $blogs], Response::HTTP_OK);
     }
 
     /**
@@ -27,21 +25,28 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Log::channel('stderr')->info('Request input', ['input' => $input]);
+
+        // retrieve authenticated user id
+        // $user_id = Auth::id();
+
+        // validate body
+        $validated_input = $request->validate([
+            'title' => ['required', 'string'],
+            'description' => ['string', 'nullable'],
+        ]);
+
+        // create new record in the db
+        $record = DB::table('blogs');
+
+        // return successful response
+        return response()->json(['success' => 'nope'], Response::HTTP_OK);
     }
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
     {
         //
     }
