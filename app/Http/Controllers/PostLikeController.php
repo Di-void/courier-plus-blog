@@ -7,6 +7,7 @@ use App\Models\PostLike;
 // use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostLikeController extends Controller
 {
@@ -17,17 +18,45 @@ class PostLikeController extends Controller
 
             $user_id = Auth::id();
 
+            $ctx = [
+                'user_id' => $user_id,
+                'data' => $post,
+                'timestamps' => now()
+            ];
+
+            Log::info('Liking Post: {ctx}', ['ctx', $ctx]);
+
             PostLike::create(['user_id' => $user_id, 'post_id' => $post->id]);
 
             return response()->json(['message' => 'success', 'data' => null], Response::HTTP_OK);
         } catch (\Exception $e) {
 
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
-                return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
-            }
+                $ctx = [
+                    'user_id' => Auth::id(),
+                    'resource_type' => 'Post',
+                    'post_id' => $id,
+                    'action' => 'Like',
+                    'timestamps' => now()
+                ];
 
-            if ($e instanceof \Illuminate\Database\UniqueConstraintViolationException) {
-                return response()->json(['error' => ['message' => "Duplicate likes not-allowed", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
+                Log::info('Unknown resource: {ctx}', ['ctx' => $ctx]);
+
+                return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
+            } else if ($e instanceof \Illuminate\Database\UniqueConstraintViolationException) {
+                $ctx = [
+                    'user_id' => Auth::id(),
+                    'resource_type' => 'Post',
+                    'post_id' => $id,
+                    'action' => 'Like',
+                    'timestamps' => now()
+                ];
+
+                Log::info('Unknown resource: {ctx}', ['ctx' => $ctx]);
+            } else {
+                $ctx = ['err' => $e->getMessage()];
+                Log::debug('Uncaught Exception: {ctx}', ['ctx' => $ctx]);
+                throw $e;
             }
         }
     }

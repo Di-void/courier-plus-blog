@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Log;
 
 class UserSeeder extends Seeder
 {
@@ -14,9 +15,13 @@ class UserSeeder extends Seeder
     {
         // \App\Models\User::factory(3)->create();
 
-        \App\Models\User::factory()->create([
+        $user = [
             'email' => 'testuser@example.com',
             'password' => 'testuser'
-        ]);
+        ];
+
+        \App\Models\User::factory()->create($user);
+
+        Log::info('New user created: {ctx}', ['ctx' => $user]);
     }
 }

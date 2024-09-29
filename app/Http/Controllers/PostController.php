@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -45,8 +46,18 @@ class PostController extends Controller
 
         $user_id = Auth::id();
         $validated['user_id'] = $user_id;
+
+        Log::info('Creating new Post: {ctx}', ['ctx' => $validated]);
+
         $post = Post::create($validated);
-        // Log post creation details
+
+        $ctx = [
+            'user_id' => $user_id,
+            'data' => $post
+        ];
+
+        Log::info('Created new Post: {ctx}', ['ctx' => $ctx]);
+
 
         return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_OK);
     }
@@ -59,8 +70,8 @@ class PostController extends Controller
         try {
             $blog = Post::withCount('likes')->with('comments')->where('id', $id)->firstOrFail();
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            $this->exception_handler($e, $id);
         }
     }
 
@@ -90,13 +101,19 @@ class PostController extends Controller
                 return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_OK);
             }
 
+            $ctx = [
+                'user_id' => Auth::id(),
+                'data' => $post,
+            ];
+
+            Log::info('Updating Post: {ctx}', ['ctx' => $ctx]);
+
             $post->save();
             $post->refresh()->loadCount('likes');
 
-            // Log post update details
             return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_OK);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            $this->exception_handler($e, $id);
         }
     }
 
@@ -106,13 +123,36 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         try {
-            Post::where('id', $id)->firstOrFail()->delete();
+            $post = Post::where('id', $id)->firstOrFail();
 
-            // Log post deletion
+            $ctx = ['user_id' => Auth::id(), 'data' => $post];
+
+            Log::info('Deleting Post: {ctx}', ['ctx' => $ctx]);
+
+            $post->delete();
+
             return response()->json(['message' => 'success', 'data' => null], Response::HTTP_OK);
-        } catch (ModelNotFoundException $e) {
-            // Log unknown resource details
-            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            $this->exception_handler($e, $id);
+        }
+    }
+
+    private function exception_handler(\Exception $e, $id)
+    {
+        if ($e instanceof ModelNotFoundException) {
+            $ctx = [
+                'user_id' => Auth::id(),
+                'resource_type' => 'Post',
+                'post_id' => $id,
+                'timestamps' => now()
+            ];
+            Log::info('Unknown resource: {ctx}', ['ctx' => $ctx]);
+
+            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'post']], RESPONSE::HTTP_BAD_REQUEST);
+        } else {
+            $ctx = ['err' => $e->getMessage()];
+            Log::debug('Uncaught Exception: {ctx}', ['ctx' => $ctx]);
+            throw $e;
         }
     }
 }
