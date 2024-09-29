@@ -22,12 +22,10 @@ class AccessTokenSeeder extends Seeder
             'name' => 'testtoken',
             'token' => hash('sha256', $token),
             'abilities' => "['*']",
-            'created_at' => now(),
-            'updated_at' => now()
         ];
 
         DB::table('personal_access_tokens')->insert($ctx);
 
-        Log::info('New Login', ['ctx' => $ctx]);
+        Log::info('New Test Login (Seed)', ['data' => $ctx]);
     }
 }

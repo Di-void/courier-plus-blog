@@ -28,6 +28,8 @@ class CommentController extends Controller
                 'content' => $clean_content['content']
             ];
 
+            Log::info('Creating new Comment', ['data' => $content]);
+
             $new_comment = Comment::create($content)->latest()->first();
 
             $ctx = [
@@ -45,14 +47,13 @@ class CommentController extends Controller
                     'user_id' => Auth::id(),
                     'resource_type' => 'Post',
                     'post_id' => $id,
-                    'action' => 'Comment',
-                    'timestamps' => now()
+                    'action' => 'Create_Comment',
                 ];
                 Log::info('Unknown resource', ['data' => $ctx]);
 
                 return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
             } else {
-                $ctx = ['err' => $e->getMessage()];
+                $ctx = ['err' => $e->getMessage(), 'resource_type' => 'Comment', 'action' => 'Create_Comment'];
                 Log::debug('Uncaught Exception', ['data' => $ctx]);
                 throw $e;
             }

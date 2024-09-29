@@ -22,6 +22,6 @@ class UserSeeder extends Seeder
 
         \App\Models\User::factory()->create($user);
 
-        Log::info('New user', ['ctx' => $user]);
+        Log::info('New Test User (Seed)', ['data' => $user]);
     }
 }

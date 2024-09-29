@@ -41,7 +41,7 @@ class BlogController extends Controller
 
         $ctx = [
             'user_id' => $user_id,
-            'data' => $blog
+            'blog' => $blog
         ];
 
         Log::info('Created New Blog', ['data' => $ctx]);
@@ -59,7 +59,7 @@ class BlogController extends Controller
             $blog = Blog::with('posts')->where('id', $id)->firstOrFail();
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
         } catch (\Exception $e) {
-            $this->exception_handler($e, $id);
+            return $this->exception_handler($e, $id, 'Read_Blog');
         }
     }
 
@@ -78,16 +78,16 @@ class BlogController extends Controller
 
             $ctx = [
                 'user_id' => Auth::id(),
-                'data' => $blog
+                'blog' => $blog
             ];
 
-            Log::info('Update Blog', ['data' => $ctx]);
+            Log::info('Updating Blog', ['data' => $ctx]);
 
             $blog->update($validated);
 
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
         } catch (\Exception $e) {
-            $this->exception_handler($e, $id);
+            return $this->exception_handler($e, $id, 'Update_Blog');
         }
     }
 
@@ -99,7 +99,7 @@ class BlogController extends Controller
         try {
             $blog = Blog::where('id', $id)->firstOrFail();
 
-            $ctx = ['user_id' => Auth::id(), 'data' => $blog];
+            $ctx = ['user_id' => Auth::id(), 'blog' => $blog];
 
             Log::info('Deleting Blog', ['data' => $ctx]);
 
@@ -107,24 +107,24 @@ class BlogController extends Controller
 
             return response()->json(['message' => 'success', 'data' => null], Response::HTTP_OK);
         } catch (\Exception $e) {
-            $this->exception_handler($e, $id);
+            return $this->exception_handler($e, $id, 'Delete_Blog');
         }
     }
 
-    private function exception_handler(\Exception $e, $id)
+    private function exception_handler(\Exception $e, int $id, string $action)
     {
         if ($e instanceof ModelNotFoundException) {
             $ctx = [
                 'user_id' => Auth::id(),
                 'resource_type' => 'Blog',
                 'blog_id' => $id,
-                'timestamps' => now()
+                'action' => $action
             ];
 
             Log::info('Unknown resource', ['data' => $ctx]);
             return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'blog']], RESPONSE::HTTP_BAD_REQUEST);
         } else {
-            $ctx = ['err' => $e->getMessage()];
+            $ctx = ['err' => $e->getMessage(), 'resource_type' => 'Blog', 'action' => $action];
             Log::debug('Uncaught Exception', ['data' => $ctx]);
             throw $e;
         }

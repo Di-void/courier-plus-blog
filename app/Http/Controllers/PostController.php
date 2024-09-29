@@ -41,6 +41,13 @@ class PostController extends Controller
         $blog = Blog::find($blog_id);
 
         if (!$blog) {
+            $ctx = [
+                'user_id' => Auth::id(),
+                'resource_type' => 'Blog',
+                'blog_id' => $blog_id,
+                'action' => 'Create_Post',
+            ];
+            Log::info('Unknown resource', ['data' => $ctx]);
             return response()->json(['error' => "Resource with id '{$blog_id}' not found", 'resource' => 'blogs'], RESPONSE::HTTP_BAD_REQUEST);
         }
 
@@ -70,7 +77,7 @@ class PostController extends Controller
             $blog = Post::withCount('likes')->with('comments')->where('id', $id)->firstOrFail();
             return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
         } catch (\Exception $e) {
-            $this->exception_handler($e, $id);
+            return $this->exception_handler($e, $id, 'Read_Post');
         }
     }
 
@@ -111,7 +118,7 @@ class PostController extends Controller
 
             return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_OK);
         } catch (\Exception $e) {
-            $this->exception_handler($e, $id);
+            return $this->exception_handler($e, $id, 'Update_Post');
         }
     }
 
@@ -131,24 +138,24 @@ class PostController extends Controller
 
             return response()->json(['message' => 'success', 'data' => null], Response::HTTP_OK);
         } catch (\Exception $e) {
-            $this->exception_handler($e, $id);
+            return $this->exception_handler($e, $id, 'Delete_Post');
         }
     }
 
-    private function exception_handler(\Exception $e, $id)
+    private function exception_handler(\Exception $e, int $id, string $action)
     {
         if ($e instanceof ModelNotFoundException) {
             $ctx = [
                 'user_id' => Auth::id(),
                 'resource_type' => 'Post',
                 'post_id' => $id,
-                'timestamps' => now()
+                'action' => $action
             ];
             Log::info('Unknown resource', ['data' => $ctx]);
 
             return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'post']], RESPONSE::HTTP_BAD_REQUEST);
         } else {
-            $ctx = ['err' => $e->getMessage()];
+            $ctx = ['err' => $e->getMessage(), 'resource_type' => 'Post', 'action' => $action];
             Log::debug('Uncaught Exception: ', ['data' => $ctx]);
             throw $e;
         }

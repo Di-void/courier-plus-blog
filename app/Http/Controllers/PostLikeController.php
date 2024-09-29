@@ -20,8 +20,7 @@ class PostLikeController extends Controller
 
             $ctx = [
                 'user_id' => $user_id,
-                'data' => $post,
-                'timestamps' => now()
+                'post' => $post,
             ];
 
             Log::info('Liking Post', ['data', $ctx]);
@@ -36,8 +35,7 @@ class PostLikeController extends Controller
                     'user_id' => Auth::id(),
                     'resource_type' => 'Post',
                     'post_id' => $id,
-                    'action' => 'Like',
-                    'timestamps' => now()
+                    'action' => 'Like_Post',
                 ];
 
                 Log::info('Unknown resource', ['data' => $ctx]);
@@ -46,15 +44,14 @@ class PostLikeController extends Controller
             } else if ($e instanceof \Illuminate\Database\UniqueConstraintViolationException) {
                 $ctx = [
                     'user_id' => Auth::id(),
-                    'resource_type' => 'Post',
+                    'resource_type' => 'PostLike',
                     'post_id' => $id,
-                    'action' => 'Like',
-                    'timestamps' => now()
+                    'action' => 'Like_Post',
                 ];
 
-                Log::info('Unknown resource', ['data' => $ctx]);
+                Log::info('Attempted Double-Like', ['data' => $ctx]);
             } else {
-                $ctx = ['err' => $e->getMessage()];
+                $ctx = ['err' => $e->getMessage(), 'resource_type' => 'PostLike', 'action' => 'Like_Post'];
                 Log::debug('Uncaught Exception', ['data' => $ctx]);
                 throw $e;
             }
