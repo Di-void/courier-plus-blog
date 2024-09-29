@@ -47,7 +47,7 @@ class PostController extends Controller
         $user_id = Auth::id();
         $validated['user_id'] = $user_id;
 
-        Log::info('Creating new Post: {ctx}', ['ctx' => $validated]);
+        Log::info('Creating new Post', ['data' => $validated]);
 
         $post = Post::create($validated);
 
@@ -56,8 +56,7 @@ class PostController extends Controller
             'data' => $post
         ];
 
-        Log::info('Created new Post: {ctx}', ['ctx' => $ctx]);
-
+        Log::info('Created new Post', ['data' => $ctx]);
 
         return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_OK);
     }
@@ -97,7 +96,6 @@ class PostController extends Controller
             })->all();
 
             if (collect($subset)->isEmpty()) {
-                // Log post update details
                 return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_OK);
             }
 
@@ -106,7 +104,7 @@ class PostController extends Controller
                 'data' => $post,
             ];
 
-            Log::info('Updating Post: {ctx}', ['ctx' => $ctx]);
+            Log::info('Updating Post', ['data' => $ctx]);
 
             $post->save();
             $post->refresh()->loadCount('likes');
@@ -127,7 +125,7 @@ class PostController extends Controller
 
             $ctx = ['user_id' => Auth::id(), 'data' => $post];
 
-            Log::info('Deleting Post: {ctx}', ['ctx' => $ctx]);
+            Log::info('Deleting Post', ['data' => $ctx]);
 
             $post->delete();
 
@@ -146,12 +144,12 @@ class PostController extends Controller
                 'post_id' => $id,
                 'timestamps' => now()
             ];
-            Log::info('Unknown resource: {ctx}', ['ctx' => $ctx]);
+            Log::info('Unknown resource', ['data' => $ctx]);
 
             return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'post']], RESPONSE::HTTP_BAD_REQUEST);
         } else {
             $ctx = ['err' => $e->getMessage()];
-            Log::debug('Uncaught Exception: {ctx}', ['ctx' => $ctx]);
+            Log::debug('Uncaught Exception: ', ['data' => $ctx]);
             throw $e;
         }
     }

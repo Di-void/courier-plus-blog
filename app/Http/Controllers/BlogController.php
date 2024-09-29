@@ -35,7 +35,7 @@ class BlogController extends Controller
         $user_id = Auth::id();
         $validated['user_id'] = $user_id;
 
-        Log::info('Creating new Blog: {data}', ['data' => $validated]);
+        Log::info('Creating new Blog', ['data' => $validated]);
 
         $blog = Blog::create($validated);
 
@@ -44,7 +44,7 @@ class BlogController extends Controller
             'data' => $blog
         ];
 
-        $this->log_handler('Created new Blog', $ctx);
+        Log::info('Created New Blog', ['data' => $ctx]);
 
         return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
     }
@@ -81,7 +81,7 @@ class BlogController extends Controller
                 'data' => $blog
             ];
 
-            $this->log_handler('Updating Blog', $ctx);
+            Log::info('Update Blog', ['data' => $ctx]);
 
             $blog->update($validated);
 
@@ -101,7 +101,7 @@ class BlogController extends Controller
 
             $ctx = ['user_id' => Auth::id(), 'data' => $blog];
 
-            $this->log_handler('Deleting Blog', $ctx);
+            Log::info('Deleting Blog', ['data' => $ctx]);
 
             $blog->delete();
 
@@ -120,17 +120,13 @@ class BlogController extends Controller
                 'blog_id' => $id,
                 'timestamps' => now()
             ];
-            $this->log_handler('Unknown resource', $ctx);
+
+            Log::info('Unknown resource', ['data' => $ctx]);
             return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'blog']], RESPONSE::HTTP_BAD_REQUEST);
         } else {
             $ctx = ['err' => $e->getMessage()];
-            Log::debug('Uncaught Exception: {ctx}', ['ctx' => $ctx]);
+            Log::debug('Uncaught Exception', ['data' => $ctx]);
             throw $e;
         }
-    }
-
-    private function log_handler(string $message, mixed $ctx)
-    {
-        Log::info($message . ': {ctx}', ['ctx' => $ctx]);
     }
 }

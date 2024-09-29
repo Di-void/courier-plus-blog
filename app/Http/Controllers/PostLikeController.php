@@ -24,7 +24,7 @@ class PostLikeController extends Controller
                 'timestamps' => now()
             ];
 
-            Log::info('Liking Post: {ctx}', ['ctx', $ctx]);
+            Log::info('Liking Post', ['data', $ctx]);
 
             PostLike::create(['user_id' => $user_id, 'post_id' => $post->id]);
 
@@ -40,7 +40,7 @@ class PostLikeController extends Controller
                     'timestamps' => now()
                 ];
 
-                Log::info('Unknown resource: {ctx}', ['ctx' => $ctx]);
+                Log::info('Unknown resource', ['data' => $ctx]);
 
                 return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
             } else if ($e instanceof \Illuminate\Database\UniqueConstraintViolationException) {
@@ -52,10 +52,10 @@ class PostLikeController extends Controller
                     'timestamps' => now()
                 ];
 
-                Log::info('Unknown resource: {ctx}', ['ctx' => $ctx]);
+                Log::info('Unknown resource', ['data' => $ctx]);
             } else {
                 $ctx = ['err' => $e->getMessage()];
-                Log::debug('Uncaught Exception: {ctx}', ['ctx' => $ctx]);
+                Log::debug('Uncaught Exception', ['data' => $ctx]);
                 throw $e;
             }
         }

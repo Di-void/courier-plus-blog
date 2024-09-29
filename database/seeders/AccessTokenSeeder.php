@@ -28,6 +28,6 @@ class AccessTokenSeeder extends Seeder
 
         DB::table('personal_access_tokens')->insert($ctx);
 
-        Log::info('New Login: {ctx}', ['ctx' => $ctx]);
+        Log::info('New Login', ['ctx' => $ctx]);
     }
 }

@@ -35,7 +35,7 @@ class CommentController extends Controller
                 'data' => $new_comment
             ];
 
-            Log::info('New Comment created: {ctx}', ['ctx' => $ctx]);
+            Log::info('New Comment created', ['data' => $ctx]);
 
             return response()->json(['message' => 'success', 'data' => $new_comment], Response::HTTP_OK);
         } catch (\Exception $e) {
@@ -48,12 +48,12 @@ class CommentController extends Controller
                     'action' => 'Comment',
                     'timestamps' => now()
                 ];
-                Log::info('Unknown resource: {ctx}', ['ctx' => $ctx]);
+                Log::info('Unknown resource', ['data' => $ctx]);
 
                 return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
             } else {
                 $ctx = ['err' => $e->getMessage()];
-                Log::debug('Uncaught Exception: {ctx}', ['ctx' => $ctx]);
+                Log::debug('Uncaught Exception', ['data' => $ctx]);
                 throw $e;
             }
         }
