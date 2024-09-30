@@ -48,7 +48,7 @@ class PostController extends Controller
                 'action' => 'Create_Post',
             ];
             Log::info('Unknown resource', ['data' => $ctx]);
-            return response()->json(['error' => "Resource with id '{$blog_id}' not found", 'resource' => 'blogs'], RESPONSE::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'error', 'error' => ['message' => "Resource with id '{$blog_id}' not found", 'resource' => 'blogs']], RESPONSE::HTTP_BAD_REQUEST);
         }
 
         $user_id = Auth::id();
@@ -65,7 +65,7 @@ class PostController extends Controller
 
         Log::info('Created new Post', ['data' => $ctx]);
 
-        return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_OK);
+        return response()->json(['message' => 'success', 'data' => $post], Response::HTTP_CREATED);
     }
 
     /**
@@ -153,7 +153,8 @@ class PostController extends Controller
             ];
             Log::info('Unknown resource', ['data' => $ctx]);
 
-            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'post']], RESPONSE::HTTP_BAD_REQUEST);
+            // return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'post']], RESPONSE::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'error', 'error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'post']], RESPONSE::HTTP_BAD_REQUEST);
         } else {
             $ctx = ['err' => $e->getMessage(), 'resource_type' => 'Post', 'action' => $action];
             Log::debug('Uncaught Exception: ', ['data' => $ctx]);

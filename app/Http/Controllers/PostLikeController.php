@@ -40,7 +40,7 @@ class PostLikeController extends Controller
 
                 Log::info('Unknown resource', ['data' => $ctx]);
 
-                return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
+                return response()->json(['message' => 'error', 'error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
             } else if ($e instanceof \Illuminate\Database\UniqueConstraintViolationException) {
                 $ctx = [
                     'user_id' => Auth::id(),
@@ -50,9 +50,13 @@ class PostLikeController extends Controller
                 ];
 
                 Log::info('Attempted Double-Like', ['data' => $ctx]);
+
+                return response()->json(['message' => 'error', 'error' => ['message' => 'Duplicate likes not allowed', 'resource' => 'posts']], RESPONSE::HTTP_FORBIDDEN);
             } else {
                 $ctx = ['err' => $e->getMessage(), 'resource_type' => 'PostLike', 'action' => 'Like_Post'];
+
                 Log::debug('Uncaught Exception', ['data' => $ctx]);
+
                 throw $e;
             }
         }

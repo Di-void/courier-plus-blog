@@ -39,7 +39,7 @@ class CommentController extends Controller
 
             Log::info('New Comment created', ['data' => $ctx]);
 
-            return response()->json(['message' => 'success', 'data' => $new_comment], Response::HTTP_OK);
+            return response()->json(['message' => 'success', 'data' => $new_comment], Response::HTTP_CREATED);
         } catch (\Exception $e) {
 
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
@@ -51,10 +51,12 @@ class CommentController extends Controller
                 ];
                 Log::info('Unknown resource', ['data' => $ctx]);
 
-                return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
+                return response()->json(['message' => 'error', 'error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'posts']], RESPONSE::HTTP_BAD_REQUEST);
             } else {
                 $ctx = ['err' => $e->getMessage(), 'resource_type' => 'Comment', 'action' => 'Create_Comment'];
+
                 Log::debug('Uncaught Exception', ['data' => $ctx]);
+
                 throw $e;
             }
         }

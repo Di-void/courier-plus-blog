@@ -26,7 +26,6 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        // Log::channel('stderr')->info('Request input', ['input' => $input]);
         $validated = $request->validate([
             'title' => ['required', 'string'],
             'description' => ['string', 'nullable'],
@@ -46,7 +45,7 @@ class BlogController extends Controller
 
         Log::info('Created New Blog', ['data' => $ctx]);
 
-        return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_OK);
+        return response()->json(['message' => 'success', 'data' => $blog], Response::HTTP_CREATED);
     }
 
     /**
@@ -122,7 +121,7 @@ class BlogController extends Controller
             ];
 
             Log::info('Unknown resource', ['data' => $ctx]);
-            return response()->json(['error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'blog']], RESPONSE::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'error', 'error' => ['message' => "Resource with id '{$id}' not found", 'resource' => 'blog']], RESPONSE::HTTP_BAD_REQUEST);
         } else {
             $ctx = ['err' => $e->getMessage(), 'resource_type' => 'Blog', 'action' => $action];
             Log::debug('Uncaught Exception', ['data' => $ctx]);
