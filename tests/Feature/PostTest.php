@@ -153,7 +153,8 @@ class PostTest extends TestCase
         $response = $this->withHeaders($this->headers)->getJson("/api/v1/posts/{$post_id}");
 
         // ASSERT
-        $response->assertStatus(200)
+        $response
+            ->assertStatus(200)
             ->assertJsonStructure(self::RES_JSON_STRUCT);
     }
 
