@@ -60,7 +60,7 @@ You will need the following tools installed on your computer to run the project.
     cp .env.example .env
     ```
 
-4. Generate applicaiton key
+4. Generate application key
 
     ```bash
     php artisan key:generate
@@ -68,7 +68,8 @@ You will need the following tools installed on your computer to run the project.
 
 5. Database migration and seeding
 
-    >[!NOTE] This command will seed the database with a test, authenticated user that will be used to interact with the various actions in the system.
+    >[!NOTE]
+    > This command will seed the database with a test, `authenticated` user that will be used to interact with the various actions in the system.
 
     ```bash
     php artisan migrate --seed
