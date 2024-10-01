@@ -67,7 +67,6 @@ You will need the following tools installed on your computer to run the project.
     ```
 
 5. Database migration and seeding
-
     > [!NOTE]
     > This command will seed the database with a test, `authenticated` user that will be used to interact with the various actions in the system.
 
