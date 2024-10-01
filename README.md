@@ -130,4 +130,4 @@ php artisan test
 - `PATCH /api/v1/posts/{id}` - Update a post
 - `DELETE /api/v1/posts/{id}` - Delete a post
 - `POST /api/v1/posts/{id}/like` - Like a post
-- `POST /api/v1/posts/{id}/comment` - Like a post
+- `POST /api/v1/posts/{id}/comment` - Comment on a post
