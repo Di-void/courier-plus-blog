@@ -1,66 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Courier Blogging System
 
-## About Laravel
+## Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This repo contains a solution to an assessment, i.e to build a blogging system with REST API endpoints for interaction and CRUD functionalities.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+![blog system](./imgs/blog-sys-model.png)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Table of Contents
 
-## Learning Laravel
+- [Courier Blogging System](#courier-blogging-system)
+  - [Overview](#overview)
+  - [Table of Contents](#table-of-contents)
+  - [Get started](#get-started)
+    - [Requirements](#requirements)
+    - [Installation](#installation)
+    - [Running the Application](#running-the-application)
+  - [Commands](#commands)
+    - [Running tests](#running-tests)
+    - [Artisan commands](#artisan-commands)
+  - [API Endpoints](#api-endpoints)
+    - [Blogs](#blogs)
+    - [Posts](#posts)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Get started
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Requirements
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+You will need the following tools installed on your computer to run the project.
 
-## Laravel Sponsors
+- [PHP](https://www.php.net/downloads) (at least v8.1)
+- [Composer](https://getcomposer.org/doc/)
+- [Git](https://git-scm.com/downloads) (For source control)
+- [SQLite]
+- [Postman](https://www.postman.com/) or cURL (For API testing)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Installation
 
-### Premium Partners
+1. Clone the repo
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    ```bash
+    git clone https://github.com/Di-void/courierplus-blog-api.git
+    cd courierplus-blog-api
+    ```
 
-## Contributing
+2. Install dependencies
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    Run Composer to install the required PHP packages.
 
-## Code of Conduct
+    ```bash
+    composer install
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. Environment setup
 
-## Security Vulnerabilities
+    Copy the example environment file to your environment file.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    ```bash
+    cp .env.example .env
+    ```
 
-## License
+4. Generate applicaiton key
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    ```bash
+    php artisan key:generate
+    ```
+
+5. Database migration and seeding
+
+    This command will seed the database with a test, authenticated user that will be used to interact with the various actions in the system.
+
+    ```bash
+    php artisan migrate --seed
+    ```
+
+### Running the Application
+
+1. Start the development server
+
+    ```bash
+    php artisan serve
+    ```
+
+    This will start the application on [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+2. API Testing (with Postman)
+    - Import the Postman collection from your Postman app
+    ![import button](./imgs/import-button.png)
+    - Test the endpoints
+    ![test endpoints](./imgs/test-req.gif)
+
+## Commands
+
+### Running tests
+
+To run tests:
+
+```bash
+php artisan test
+```
+
+![testing](./imgs/courier-tests.png)
+
+### Artisan commands
+
+- List all artisan commands
+
+  ```bash
+  php artisan list
+  ```
+
+## API Endpoints
+
+(Optional) include a brief list of API routes if needed.
+
+### Blogs
+
+- `GET /api/v1/blogs` - Fetch all blogs
+- `POST /api/v1/blogs` - Create a new blog
+- `GET /api/v1/blogs/{id}` - Read a blog
+- `PATCH /api/v1/blogs/{id}` - Update a blog
+- `DELETE /api/v1/blogs/{id}` - Delete a blog
+
+### Posts
+
+- `GET /api/v1/posts` - Fetch all posts
+- `POST /api/v1/posts` - Create a new post
+- `GET /api/v1/posts/{id}` - Read a post
+- `PATCH /api/v1/posts/{id}` - Update a post
+- `DELETE /api/v1/posts/{id}` - Delete a post
+- `POST /api/v1/posts/{id}/like` - Like a post
+- `POST /api/v1/posts/{id}/comment` - Like a post
