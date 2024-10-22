@@ -112,7 +112,7 @@ php artisan test
 
 ## API Endpoints
 
-(Optional) include a brief list of API routes if needed.
+List of API endpoints.
 
 ### Blogs
 
